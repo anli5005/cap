@@ -55,11 +55,11 @@ export default function LiterallyEverything() {
             }}>
                 Add Color
             </button>
-            <button className="text-blue-500 text-center mt-2" onClick={() => {
+            {/* <button className="text-blue-500 text-center mt-2" onClick={() => {
                 setAnimationType((animationType + 1) % types.length);
             }}>
                 Animation Type: {types[animationType]}
-            </button>
+            </button> */}
         </div>
         <button onClick={async () => {
             let style: Style;
@@ -75,13 +75,13 @@ export default function LiterallyEverything() {
                     stops: gradient(rgb),
                 };
 
-                if (animationType === 1) {
+                /* if (animationType === 1) {
                     style.animation = {
                         type: AnimationType.LINEAR,
                         duration: 2000,
                         bounce: false,
                     };
-                }
+                } */
             }
 
             await fetch(`/api/change`, {
