@@ -20,7 +20,7 @@ export function gradient(colors: Stop[]) {
             result.push(colors[colors.length - 1]);
         } else {
             const index = Math.floor(i / NUM_LEDS * (colors.length - 1));
-            const blendFactor = (i / NUM_LEDS * (colors.length - 1)) % 1;
+            const blendFactor = 1 - ((i / NUM_LEDS * (colors.length - 1)) % 1);
             const gamma = 2;
             const a = colors[index];
             const b = colors[index + 1];
