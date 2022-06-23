@@ -16,11 +16,6 @@ function Preset({ selected, onSelect, name, description }: { selected: boolean, 
 export default function LiterallyEverything() {
     const [preset, setPreset] = useState<number | null>(null);
     const [colors, setColors] = useState<string[]>(["#0000FF"]);
-    const types = [
-        "None",
-        "Loop (Linear)",
-    ];
-    const [animationType, setAnimationType] = useState(0);
 
     return <div className="p-4">
         <h1 className="text-3xl font-bold text-center mb-4">cap</h1>
@@ -38,8 +33,17 @@ export default function LiterallyEverything() {
             {colors.map((color, index) => (
                 <Color
                     {...{color, index}}
-                    editColor={(newColor: string) => setColors([...colors].splice(index, 1, newColor))}
-                    deleteColor={() => setColors([...colors].splice(index, 1))}
+                    key={index}
+                    editColor={(newColor: string) => {
+                        const newColors = [...colors];
+                        newColors.splice(index, 1, newColor);
+                        setColors(newColors);
+                    }}
+                    deleteColor={() => {
+                        const newColors = [...colors];
+                        newColors.splice(index, 1);
+                        setColors(newColors);
+                    }}
                     />
                 
             ))}
@@ -87,5 +91,8 @@ export default function LiterallyEverything() {
         }} className="block w-full mt-4 border-blue-500 border border-b-4 rounded bg-blue-500/30 hover:bg-blue-500/50 active:bg-blue-500/70 transition-colors p-2 font-bold" type="button">
             Confirm
         </button>
+        <div className="mt-2 text-white/70 text-center text-sm">
+            A thing by <a href="https://anli.dev" className="underline">Anthony Li</a>. Huge props to <a href="https://github.com/Blckbrry-Pi" className="underline" target="_blank" rel="noopener noreferrer">Sky Calaman</a> for making this hacky piece of code less bad.
+        </div>
     </div>;
 }
