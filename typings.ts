@@ -16,10 +16,6 @@ export const Stop = Type.Object({
         maximum: 255,
         multipleOf: 1,
     }),
-    index: Type.Number({
-        minimum: 0,
-        multipleOf: 1,
-    }),
 });
 
 export type Stop = Static<typeof Stop>;
@@ -41,8 +37,12 @@ export const Animation = Type.Object({
 
 export type Animation = Static<typeof Animation>;
 
+export const NUM_LEDS = 46;
+
 export const Style = Type.Object({
-    stops: Type.Array(Stop),
+    stops: Type.Array(Stop, {
+        maxItems: NUM_LEDS,
+    }),
     animation: Type.Optional(Animation),
 });
 

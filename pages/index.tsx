@@ -1,6 +1,6 @@
-import { presets } from "presets";
+import { fillSolid, presets } from "presets";
 import { useEffect, useState } from "react";
-import { Style } from "typings";
+import { NUM_LEDS, Style } from "typings";
 
 export default function LiterallyEverything() {
     const [preset, setPreset] = useState<number | null>(null);
@@ -30,14 +30,11 @@ export default function LiterallyEverything() {
             } else {
                 const [_, r, g, b] = /^#([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})$/.exec(color)!;
                 style = {
-                    stops: [
-                        {
-                            r: parseInt(r, 16),
-                            g: parseInt(g, 16),
-                            b: parseInt(b, 16),
-                            index: 0,
-                        }
-                    ]
+                    stops: fillSolid({
+                        r: parseInt(r, 16),
+                        g: parseInt(g, 16),
+                        b: parseInt(b, 16),
+                    }),
                 };
             }
 
