@@ -33,7 +33,7 @@ export default function LiterallyEverything() {
             })}
             <Preset selected={preset === null} onSelect={() => setPreset(null)} name="Custom" description="Barf your very own artistic choices all over my graduation cap." />
         </div>
-        <div className="mb-4 w-full justify-center items-center flex flex-col">
+        {preset === null && <div className="mb-4 w-full justify-center items-center flex flex-col">
             <div className="text-center mb-2">Alright then! Let's see what you've got:</div>
             {colors.map((color, index) => (
                 <Color
@@ -53,7 +53,7 @@ export default function LiterallyEverything() {
             }}>
                 Animation Type: {types[animationType]}
             </button> */}
-        </div>
+        </div>}
         <button onClick={async () => {
             let style: Style;
             if (preset !== null) {
