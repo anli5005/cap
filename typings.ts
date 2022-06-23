@@ -51,4 +51,5 @@ export type Style = Static<typeof Style>;
 export interface Preset {
     style: Style;
     name: string;
+    description: string;
 }

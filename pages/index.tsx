@@ -1,41 +1,87 @@
-import { fillSolid, presets } from "presets";
+import { fillSolid, gradient, presets } from "presets";
 import { useEffect, useState } from "react";
-import { NUM_LEDS, Style } from "typings";
+import { AnimationType, NUM_LEDS, Style } from "typings";
+
+function Preset({ selected, onSelect, name, description }: { selected: boolean, onSelect: () => void, name: string, description: string }) {
+    return <button type="button" className={`w-full block border-2 ${selected ? "border-blue-500 bg-blue-500 text-white" : "border-gray-500 text-gray-300"} rounded p-2`} onClick={() => {
+        onSelect();
+    }}>
+        <h5 className="text-lg font-bold">{name}</h5>
+        <div>{description}</div>
+    </button>
+}
 
 export default function LiterallyEverything() {
     const [preset, setPreset] = useState<number | null>(null);
-    const [color, setColor] = useState<string>("#000000");
-
-    useEffect(() => {
-        setPreset(null);
-    }, [color]);
+    const [colors, setColors] = useState<string[]>(["#0000FF"]);
+    const types = [
+        "None",
+        "Loop (Linear)",
+    ];
+    const [animationType, setAnimationType] = useState(0);
 
     return <div className="p-4">
         <h1 className="text-3xl font-bold text-center mb-4">cap</h1>
-        <div className="w-full text-center flex flex-col justify-center items-center">
-            <div>Select a color:</div>
-            <input type="color" value={color} onChange={e => setColor(e.target.value)} />
+        <div className="w-full text-center">
+            <div>Select a preset:</div>
         </div>
-        <div className="w-full text-center flex flex-col justify-center items-center">
-            <div>Or select a preset:</div>
-            <select value={preset === null ? "none" : preset.toString()} onChange={e => setPreset(e.target.value === "none" ? null : parseInt(e.target.value))}>
-                <option value="none">None</option>
-                {presets.map(({ name }, index) => <option key={index} value={index}>{name}</option>)}
-            </select>
+        <div className="mt-2 mb-4 space-y-2">
+            {presets.map(({ name, description }, index) => {
+                return <Preset key={index} selected={preset === index} onSelect={() => setPreset(index)} name={name} description={description} />;
+            })}
+            <Preset selected={preset === null} onSelect={() => setPreset(null)} name="Custom" description="Barf your very own artistic choices all over my graduation cap." />
+        </div>
+        <div className="mb-4 w-full justify-center items-center flex flex-col">
+            <div className="text-center mb-2">Alright then! Let's see what you've got:</div>
+            {colors.map((color, index) => {
+                return <div className="text-center" key={index}>
+                    <span className="mr-1">Color {index + 1}:</span>
+                    <input className="h-12 align-middle" type="color" value={color} onChange={e => {
+                        const newColors = [...colors];
+                        newColors[index] = e.target.value;
+                        setColors(newColors);
+                    }} />
+                    <button className="ml-2 text-red-500" type="button" onClick={() => {
+                        const newColors = [...colors];
+                        newColors.splice(index, 1);
+                        setColors(newColors);
+                    }}>
+                        Remove
+                    </button>
+                </div>;
+            })}
+            <button className="text-blue-500 text-center mt-2" onClick={() => {
+                setColors([...colors, colors.length === 0 ? "#0000FF" : colors[colors.length - 1]]);
+            }}>
+                Add Color
+            </button>
+            <button className="text-blue-500 text-center mt-2" onClick={() => {
+                setAnimationType((animationType + 1) % types.length);
+            }}>
+                Animation Type: {types[animationType]}
+            </button>
         </div>
         <button onClick={async () => {
             let style: Style;
             if (preset !== null) {
                 style = presets[preset].style;
             } else {
-                const [_, r, g, b] = /^#([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})$/.exec(color)!;
+                const rgb = colors.map(color => {
+                    const [_, r, g, b] = /^#([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})$/.exec(color)!;
+                    return {r: parseInt(r, 16), g: parseInt(g, 16), b: parseInt(b, 16)};
+                });
+
                 style = {
-                    stops: fillSolid({
-                        r: parseInt(r, 16),
-                        g: parseInt(g, 16),
-                        b: parseInt(b, 16),
-                    }),
+                    stops: gradient(rgb),
                 };
+
+                if (animationType === 1) {
+                    style.animation = {
+                        type: AnimationType.LINEAR,
+                        duration: 2000,
+                        bounce: false,
+                    };
+                }
             }
 
             await fetch(`/api/change`, {
