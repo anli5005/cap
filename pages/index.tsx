@@ -2,6 +2,8 @@ import { fillSolid, gradient, presets } from "presets";
 import { useEffect, useState } from "react";
 import { AnimationType, NUM_LEDS, Style } from "typings";
 
+import Color from "../components/Color";
+
 function Preset({ selected, onSelect, name, description }: { selected: boolean, onSelect: () => void, name: string, description: string }) {
     return <button type="button" className={`w-full block border-2 ${selected ? "border-blue-500 bg-blue-500 text-white" : "border-gray-500 text-gray-300"} rounded p-2`} onClick={() => {
         onSelect();
@@ -33,24 +35,15 @@ export default function LiterallyEverything() {
         </div>
         <div className="mb-4 w-full justify-center items-center flex flex-col">
             <div className="text-center mb-2">Alright then! Let's see what you've got:</div>
-            {colors.map((color, index) => {
-                return <div className="text-center" key={index}>
-                    <span className="mr-1">Color {index + 1}:</span>
-                    <input className="h-12 align-middle" type="color" value={color} onChange={e => {
-                        const newColors = [...colors];
-                        newColors[index] = e.target.value;
-                        setColors(newColors);
-                    }} />
-                    <button className="ml-2 text-red-500" type="button" onClick={() => {
-                        const newColors = [...colors];
-                        newColors.splice(index, 1);
-                        setColors(newColors);
-                    }}>
-                        Remove
-                    </button>
-                </div>;
-            })}
-            <button className="text-blue-500 text-center mt-2" onClick={() => {
+            {colors.map((color, index) => (
+                <Color
+                    {...{color, index}}
+                    editColor={(newColor: string) => setColors([...colors].splice(index, 1, newColor))}
+                    deleteColor={() => setColors([...colors].splice(index, 1))}
+                    />
+                
+            ))}
+            <button className="text-blue-500 text-center mt-3 p-3 rounded bg-slate-800" onClick={() => {
                 setColors([...colors, colors.length === 0 ? "#0000FF" : colors[colors.length - 1]]);
             }}>
                 Add Color
